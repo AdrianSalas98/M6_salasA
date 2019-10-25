@@ -9,6 +9,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.io.File;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -17,6 +21,7 @@ public class PT5_2 {
 
 	public static void main(String argv[]) {
 		generarXML();
+		menu();
 
 	}
 
@@ -127,7 +132,7 @@ public class PT5_2 {
 			Element alumne22 = doc.createElement("Alumne");
 			alumne22.appendChild(doc.createTextNode("Alexis Mengual"));
 			Element alumne33 = doc.createElement("Alumne");
-			alumne33.appendChild(doc.createTextNode("Sean Saez"));
+			alumne33.appendChild(doc.createTextNode("Adrian Nguema"));
 			Element alumne44 = doc.createElement("Alumne");
 			alumne44.appendChild(doc.createTextNode("Ali Murtaza"));
 			alumnes2.appendChild(alumne11);
@@ -213,10 +218,10 @@ public class PT5_2 {
 
 				switch (opcion) {
 				case 1:
-					
+					anadirAlumno();
 					break;
 				case 2:
-				
+					eliminarAlumno();
 					break;
 				case 3:
 					salir = true;
@@ -232,7 +237,88 @@ public class PT5_2 {
 		}
 
 	}
-	
-	
+
+	public static void anadirAlumno() {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(new File("..\\M6_salasA\\Instituto.xml"));
+
+			Scanner lector = new Scanner(System.in);
+
+			NodeList curso = doc.getElementsByTagName("Curso");
+
+			System.out.println("Introduce el curso del alumno: ");
+			String nCurso = lector.nextLine();
+			for (int i = 0; i < curso.getLength(); i++) {
+				Element element = (Element) curso.item(i);
+				NamedNodeMap nodeMap = element.getAttributes();
+				for (int j = 0; j < nodeMap.getLength(); j++) {
+					Node node = nodeMap.item(j);
+					if (node.getNodeValue().equalsIgnoreCase(nCurso)) {
+						NodeList nl = element.getChildNodes();
+						for (int k = 0; k < nl.getLength(); k++) {
+							Element element2 = (Element) nl.item(k);
+							if (element2.getNodeName().equalsIgnoreCase("alumnes")) {
+								NodeList nl2 = element2.getChildNodes();
+								System.out.println("Introduce el nombre del alumno a anadir: ");
+								String alumnoAnadir = lector.nextLine();
+								Element alumnoNuevo = doc.createElement("alumne");
+								alumnoNuevo.appendChild(doc.createTextNode(alumnoAnadir));
+								element2.appendChild(alumnoNuevo);
+								
+							}
+						}
+					}
+				}
+			}
+
+		} catch (Exception e) {
+
+		}
+	}
+
+	public static void eliminarAlumno() {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(new File("..\\M6_salasA\\Instituto.xml"));
+			Scanner lector = new Scanner(System.in);
+
+			NodeList curso = doc.getElementsByTagName("Curso");
+
+			System.out.println("Introduce el curso del alumno: ");
+			String nCurso = lector.nextLine();
+			for (int i = 0; i < curso.getLength(); i++) {
+				Element element = (Element) curso.item(i);
+				NamedNodeMap nodeMap = element.getAttributes();
+				for (int j = 0; j < nodeMap.getLength(); j++) {
+					Node node = nodeMap.item(j);
+					if (node.getNodeValue().equalsIgnoreCase(nCurso)) {
+						NodeList nl = element.getChildNodes();
+						for (int k = 0; k < nl.getLength(); k++) {
+							Element element2 = (Element) nl.item(k);
+							if (element2.getNodeName().equalsIgnoreCase("alumnes")) {
+								NodeList nl2 = element2.getChildNodes();
+								System.out.println("Introduce el nombre del alumno a eliminar: ");
+								String alumnoEliminar = lector.nextLine();
+								for (int l = 0; l < nl2.getLength(); l++) {
+									Element element3 = (Element) nl2.item(l);
+									String nAlumno = element3.getTextContent();
+									String[] separacion = nAlumno.split(" ");
+									if (separacion[0].equalsIgnoreCase(alumnoEliminar)) {
+										element3.getParentNode().removeChild(element3);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+		} catch (Exception e) {
+
+		}
+	}
 
 }
